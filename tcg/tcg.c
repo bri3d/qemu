@@ -741,7 +741,7 @@ void tcg_region_init(void)
 
         tcg_region_bounds(i, &start, &end);
         rc = qemu_mprotect_none(end, page_size);
-        g_assert(!rc);
+        //g_assert(!rc);
         if (splitwx_diff) {
             rc = qemu_mprotect_none(end + splitwx_diff, page_size);
             g_assert(!rc);

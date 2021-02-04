@@ -84,15 +84,15 @@ static void tricore_s18_init(MachineState *machine, int board_id)
                            &error_fatal);
     memory_region_init_ram(brom, NULL, "BROM",
                            16 * KiB, &error_fatal);
-    memory_region_init_ram(lmu_ram, NULL, "BROM",
+    memory_region_init_ram(lmu_ram, NULL, "LMURAM",
                            128 * KiB, &error_fatal);
     memory_region_init_ram(pmi_pspr, NULL, "PMI_PSPR",
                            32 * KiB, &error_fatal);
     memory_region_init_ram(dmi_dspr, NULL, "DMI_DSPR",
                            128 * KiB, &error_fatal);
-    memory_region_init_ram(pcp_cmem, NULL, "DMI_DSPR",
+    memory_region_init_ram(pcp_cmem, NULL, "PCP_CMEM",
                            32 * KiB, &error_fatal);
-    memory_region_init_ram(pcp_pram, NULL, "DMI_DSPR",
+    memory_region_init_ram(pcp_pram, NULL, "PCP_PRAM",
                            16 * KiB, &error_fatal);
 
     memory_region_add_subregion(sysmem, 0x80000000, pmu_pflash0);
