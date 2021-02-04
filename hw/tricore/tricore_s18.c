@@ -57,6 +57,8 @@ static void tricore_s18_init(MachineState *machine, int board_id)
     MemoryRegion *sysmem = get_system_memory();
     MemoryRegion *pmu_pflash0 = g_new(MemoryRegion, 1);
     MemoryRegion *pmu_pflash1 = g_new(MemoryRegion, 1);
+    MemoryRegion *pmu_pflash0_uncache = g_new(MemoryRegion, 1);
+    MemoryRegion *pmu_pflash1_uncache = g_new(MemoryRegion, 1);
     MemoryRegion *pmu_dflash0 = g_new(MemoryRegion, 1);
     MemoryRegion *pmu_dflash1 = g_new(MemoryRegion, 1);
     MemoryRegion *brom = g_new(MemoryRegion, 1);
@@ -64,6 +66,7 @@ static void tricore_s18_init(MachineState *machine, int board_id)
     MemoryRegion *dmi_dspr = g_new(MemoryRegion, 1);
     MemoryRegion *pcp_cmem = g_new(MemoryRegion, 1);
     MemoryRegion *pcp_pram = g_new(MemoryRegion, 1);
+    MemoryRegion *lmu_ram = g_new(MemoryRegion, 1);
 
     cpu = TRICORE_CPU(cpu_create(machine->cpu_type));
     env = &cpu->env;
@@ -71,12 +74,18 @@ static void tricore_s18_init(MachineState *machine, int board_id)
                            2 * MiB, &error_fatal);
     memory_region_init_ram(pmu_pflash1, NULL, "PMU_PFLASH1",
                            2 * MiB, &error_fatal);
+    memory_region_init_alias(pmu_pflash0_uncache, NULL, "PMU_PFLASH0_UNCACHED", pmu_pflash0, 0,
+                           2 * MiB);
+    memory_region_init_alias(pmu_pflash1_uncache, NULL, "PMU_PFLASH1_UNCACHED", pmu_pflash1, 0,
+                           2 * MiB);
     memory_region_init_ram(pmu_dflash0, NULL, "PMU_DFLASH0", 64 * KiB,
                            &error_fatal);
     memory_region_init_ram(pmu_dflash1, NULL, "PMU_DFLASH1", 64 * KiB,
                            &error_fatal);
     memory_region_init_ram(brom, NULL, "BROM",
                            16 * KiB, &error_fatal);
+    memory_region_init_ram(lmu_ram, NULL, "BROM",
+                           128 * KiB, &error_fatal);
     memory_region_init_ram(pmi_pspr, NULL, "PMI_PSPR",
                            32 * KiB, &error_fatal);
     memory_region_init_ram(dmi_dspr, NULL, "DMI_DSPR",
@@ -88,9 +97,12 @@ static void tricore_s18_init(MachineState *machine, int board_id)
 
     memory_region_add_subregion(sysmem, 0x80000000, pmu_pflash0);
     memory_region_add_subregion(sysmem, 0x80800000, pmu_pflash1);
+    memory_region_add_subregion(sysmem, 0xA0000000, pmu_pflash0_uncache);
+    memory_region_add_subregion(sysmem, 0xA0800000, pmu_pflash1_uncache);
     memory_region_add_subregion(sysmem, 0xaf000000, pmu_dflash0);
     memory_region_add_subregion(sysmem, 0xaf080000, pmu_dflash1);
     memory_region_add_subregion(sysmem, 0xafffc000, brom);
+    memory_region_add_subregion(sysmem, 0xb0000000, lmu_ram);
     memory_region_add_subregion(sysmem, 0xc0000000, pmi_pspr);
     memory_region_add_subregion(sysmem, 0xd0000000, dmi_dspr);
     memory_region_add_subregion(sysmem, 0xf0050000, pcp_cmem);
